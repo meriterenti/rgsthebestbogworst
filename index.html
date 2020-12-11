@@ -1,0 +1,128 @@
+<?php
+/*
+Template Name: Home Page
+*/
+get_header();
+$adv2 = '';
+$adv3 = '';
+$adv2_url = get_theme_mod( 'adv2_url', '#' );
+$adv3_url = get_theme_mod( 'adv3_url', '#' );
+ if (get_theme_mod('sidebar_position','right') == 'left') :
+	$wrapper_class = 'wrapper-left-sidebar';
+ endif;
+ if (get_theme_mod('sidebar_position','right') == 'right') :
+	$wrapper_class = 'wrapper-right-sidebar';
+ endif;
+  if (get_theme_mod('sidebar_position','right') == 'none') :
+	$wrapper_class = 'wrapper-full-width';
+ endif;
+ 
+?>
+<div class="col-md-12 wrapper-content no-padding">
+	<!-- Left Sidebar -->
+	<?php if (get_theme_mod('sidebar_position','right') == 'left' && is_active_sidebar( 'blog-sidebar' )) : ?>		
+    <div class="col-md-3" id="sidebar" role="navigation">
+       <?php get_template_part('sidebar'); ?>
+    </div>
+	<?php endif;?>
+	<!-- No Sidebar -->
+	<?php if (get_theme_mod('sidebar_position','right') == 'none' || !is_active_sidebar( 'blog-sidebar' )) : ?>		
+    <div class="col-md-12 no-padding">
+	<?php else: ?>
+	<div class="col-md-9 <?php echo esc_attr($wrapper_class); ?> no-padding">
+	<?php endif;?>
+	
+	 <!-- Advertisement Before Content -->
+		<?php if( get_theme_mod( 'adv2_background_image', $adv2 ) != '') { ?> 
+		<div class="row">
+			<div class="col-md-12 adv-before-container ">
+			
+				<a href="<?php echo esc_url($adv2_url); ?>" target="_blank"><img src="<?php echo esc_url( get_theme_mod( 'adv2_background_image', $adv2 ) ); ?>" alt="<?php echo esc_url($adv2_url); ?>"/></a>
+			
+			</div>
+		</div>
+		<?php } ?>
+			
+		<!-- Content -->
+		<div id="content" role="main" class="row">
+		
+		<?php $paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
+		$showposts = get_option('posts_per_page');
+		$args = array(
+			'posts_per_page' => 1,
+			'cat'           => '31,32,33,82',
+		);
+		$the_query = new WP_Query( $args );
+
+		global $wp_query;
+		
+		$tmp_query = $wp_query;
+		$wp_query = null;
+
+		$wp_query = $the_query;
+
+		if ($the_query->have_posts()) : 
+			while ($the_query->have_posts()) : $the_query->the_post();?>
+				
+				<?php if (get_theme_mod('blog_layout','Grid 2 Columns') == 'Full Width') : ?>			
+					<?php get_template_part('inc/content-full'); ?>
+				<?php endif;?>
+			
+				<?php if (get_theme_mod('blog_layout','Grid 2 Columns') == 'List Layout') : ?>			
+					<?php get_template_part('inc/content-list'); ?>
+				<?php endif;?>
+			
+				<?php if (get_theme_mod('blog_layout','Grid 2 Columns') == 'Grid 2 Columns') : ?>			
+					<?php get_template_part('inc/content-grid-2-col'); ?>
+				<?php endif;?>
+			
+				<?php if (get_theme_mod('blog_layout','Grid 2 Columns') == 'Grid 3 Columns') : ?>			
+					<?php get_template_part('inc/content-grid-3-col'); ?>
+				<?php endif;?>		
+				
+				<?php if (get_theme_mod('blog_layout','Grid 2 Columns') == 'Zigzag Layout') : ?>			
+					<?php get_template_part('inc/content-zigzag'); ?>
+				<?php endif;?>	
+			<?php  endwhile; ?>
+</div>
+<div class="clear-block"></div>
+	  <!-- Advertisement After Content -->
+		<?php if( get_theme_mod( 'adv3_background_image', $adv3 ) != '') { ?> 
+	  	<div class="row">
+			<div class="col-md-12 adv-after-container">
+				<a href="<?php echo esc_url($adv3_url); ?>" target="_blank"><img src="<?php echo esc_url( get_theme_mod( 'adv3_background_image', $adv3 ) ); ?>" alt="<?php echo esc_url($adv3_url); ?>"/></a>
+			</div>
+		</div>
+		<?php } ?>
+		
+
+	
+   <?php  wp_reset_postdata(); ?>
+
+	<?php else : ?>
+    <div class=" error-404 ">
+	<div class="centered">
+		<h1 class="entry-title"><?php esc_html_e('No Posts Found', 'aileen'); ?></h1>
+				<?php if ( is_home() && current_user_can( 'publish_posts' ) ) : ?>
+			<p><?php printf( __( 'Ready to publish your first post? <a href="%1$s">Get started here</a>.', 'aileen' ), esc_url( admin_url( 'post-new.php' ) ) ); ?></p>
+			<?php endif;?>
+		
+	</div>
+	</div>
+	<?php endif;
+
+$wp_query = null;
+$wp_query = $tmp_query; ?>
+		
+
+		
+    </div>
+    
+	<!-- Right Sidebar -->
+	<?php if (get_theme_mod('sidebar_position','right') == 'right' && is_active_sidebar( 'blog-sidebar' )) : ?>		
+    <div class="col-md-3" id="sidebar" role="navigation">
+       <?php get_template_part('sidebar'); ?>
+    </div>
+	<?php endif;?>
+</div>
+<?php get_footer(); ?> 
